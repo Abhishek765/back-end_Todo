@@ -9,13 +9,8 @@ import {
 
 const router = express.Router();
 
-router.get('/', getContacts);
+router.route('/').get(getContacts).post(createContact);
 
-router
-  .route('/:id')
-  .get(getContact)
-  .post(createContact)
-  .put(updateContact)
-  .delete(deleteContact);
+router.route('/:id').get(getContact).put(updateContact).delete(deleteContact);
 
 export default router;
