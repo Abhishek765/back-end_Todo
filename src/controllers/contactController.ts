@@ -2,6 +2,7 @@ import { Response, Request } from 'express';
 import expressAsyncHandler from 'express-async-handler';
 import { ContactType } from '../types';
 import ContactModel from '../models/contact';
+import { handleIdResponse } from '../utils/helperFunctions';
 
 /**
  * @description Get all Contacts
@@ -52,6 +53,7 @@ export const createContact = expressAsyncHandler(
  */
 export const getContact = expressAsyncHandler(
   async (req: Request, res: Response) => {
+    handleIdResponse(req.params.id);
     const contact = await ContactModel.findById(req.params.id);
 
     if (!contact) {
@@ -71,7 +73,16 @@ export const getContact = expressAsyncHandler(
  */
 export const updateContact = expressAsyncHandler(
   async (req: Request, res: Response) => {
-    // const contact
+    handleIdResponse(req.params.id);
+    const updatedContact = await ContactModel.findByIdAndUpdate(
+      req.params.id,
+      req.body
+    );
+
+    if (!updatedContact) {
+      res.status(404);
+      throw new Error('Contact not found');
+    }
 
     res.status(200).json({ message: `Updated Contact for ${req.params.id}` });
   }
@@ -85,6 +96,15 @@ export const updateContact = expressAsyncHandler(
  */
 export const deleteContact = expressAsyncHandler(
   async (req: Request, res: Response) => {
+    handleIdResponse(req.params.id);
+
+    const deletedContact = await ContactModel.findByIdAndDelete(req.params.id);
+
+    if (!deletedContact) {
+      res.status(404);
+      throw new Error('Contact not found');
+    }
+
     res.status(200).json({ message: `Deleted Contact for ${req.params.id}` });
   }
 );
